@@ -13,16 +13,25 @@ const hospitalRoutes = require('./routes/hospital.routes');
 const pharmacyRoutes = require('./routes/pharmacy.routes');
 const missionRoutes = require('./routes/mission.routes');
 const notificationRoutes = require('./routes/notification.routes');
+const authRoutes = require('./routes/auth.routes'); // NEW
 
 const app = express();
 
 app.use(helmet());
+
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id', 'x-user-role']
+    allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'x-user-id',
+        'x-user-role'
+    ]
 }));
+
 app.use(morgan(config.nodeEnv === 'production' ? 'combined' : 'dev'));
+
 app.use(express.json());
 
 // API Base Endpoints Registration
@@ -33,6 +42,7 @@ app.use('/api/hospitals', hospitalRoutes);
 app.use('/api/pharmacies', pharmacyRoutes);
 app.use('/api/missions', missionRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/auth', authRoutes); // NEW
 
 const PORT = config.port;
 
@@ -42,10 +52,15 @@ const startServer = async () => {
         console.log('✓ Connected to Neon PostgreSQL');
 
         app.listen(PORT, () => {
-            console.log(`[KAVACH SERVER] Operational in ${config.nodeEnv} mode on port ${PORT}`);
+            console.log(
+                `[KAVACH SERVER] Operational in ${config.nodeEnv} mode on port ${PORT}`
+            );
         });
     } catch (error) {
-        console.error('✗ Database Connection Failure on Startup:', error.message);
+        console.error(
+            '✗ Database Connection Failure on Startup:',
+            error.message
+        );
         process.exit(1);
     }
 };
